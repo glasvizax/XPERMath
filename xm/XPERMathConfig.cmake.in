@@ -1,0 +1,10 @@
+@PACKAGE_INIT@
+
+include(${CMAKE_CURRENT_LIST_DIR}/XPERMathExp.cmake OPTIONAL RESULT_VARIABLE res)
+
+if(res STREQUAL "NOTFOUND")
+    if(${CMAKE_FIND_PACKAGE_NAME}_FIND_REQUIRED)
+        set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE "couldn't find XPERMath")
+        set(${CMAKE_FIND_PACKAGE_NAME}_FOUND false)
+    endif()
+endif()

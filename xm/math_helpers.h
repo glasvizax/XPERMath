@@ -22,7 +22,8 @@ namespace xm
 		return a + f * (b - a);
 	}
 
-	//TODO: completion 
+	//TODO: completion - this was stolen from glm :(
+	/*
 	template<typename T>
 	bool decompose(matrix<4, T> const& ModelMatrix, vector<3, T>& Scale, quaternion<T>& Orientation, vector<3, T>& Translation, vector<3, T>& Skew, vector<4, T>& Perspective)
 	{
@@ -186,5 +187,7 @@ namespace xm
 
 		return true;
 	}
+	*/
+
 
 }
