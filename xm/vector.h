@@ -138,8 +138,8 @@ namespace xm
 		};
 	};
 
-	template <uint8_t N, typename T>
-	vector<N, T> operator*(vector<N, T> a, T v)
+	template <uint8_t N, typename T, typename K>
+	vector<N, T> operator*(vector<N, T> a, K v)
 	{
 		vector<N, T> res;
 		for (uint8_t i = 0; i < N; ++i)
@@ -149,14 +149,14 @@ namespace xm
 		return res;
 	}
 
-	template <uint8_t N, typename T>
-	inline vector<N, T> operator*(T v, vector<N, T> a)
+	template <uint8_t N, typename T, typename K>
+	inline vector<N, T> operator*(K v, vector<N, T> a)
 	{
 		return operator*(a, v);
 	}
 
-	template <uint8_t N, typename T>
-	vector<N, T>& operator*=(vector<N, T>& a, T v)
+	template <uint8_t N, typename T, typename K>
+	vector<N, T>& operator*=(vector<N, T>& a, K v)
 	{
 		for (uint8_t i = 0; i < N; ++i)
 		{
@@ -165,15 +165,15 @@ namespace xm
 		return a;
 	}
 
-	template <uint8_t N, typename T>
-	vector<N, T>& operator/=(vector<N, T>& a, T v)
+	template <uint8_t N, typename T, typename K>
+	vector<N, T>& operator/=(vector<N, T>& a, K v)
 	{
 		for (uint8_t i = 0; i < N; ++i) a[i] /= v;
 		return a;
 	}
 
-	template <uint8_t N, typename T>
-	vector<N, T> operator/(vector<N, T> a, T v)
+	template <uint8_t N, typename T, typename K>
+	vector<N, T> operator/(vector<N, T> a, K v)
 	{
 		vector<N, T> res;
 		for (uint8_t i = 0; i < N; ++i)
@@ -183,8 +183,8 @@ namespace xm
 		return res;
 	}
 
-	template <uint8_t N, typename T>
-	vector<N, T> operator+(vector<N, T> a, vector<N, T> b)
+	template <uint8_t N, typename T, typename K>
+	vector<N, T> operator+(vector<N, T> a, vector<N, K> b)
 	{
 		vector<N, T> res;
 		for (uint8_t i = 0; i < N; ++i)
@@ -204,14 +204,14 @@ namespace xm
 		return a;
 	}
 
-	template <uint8_t N, typename T>
-	inline vector<N, T> operator-(vector<N, T> a, vector<N, T> b)
+	template <uint8_t N, typename T, typename K>
+	inline vector<N, T> operator-(vector<N, T> a, vector<N, K> b)
 	{
 		return operator+(a, -b);
 	}
 
-	template <uint8_t N, typename T>
-	inline vector<N, T>& operator+=(vector<N, T>& a, vector<N, T> b)
+	template <uint8_t N, typename T, typename K>
+	inline vector<N, T>& operator+=(vector<N, T>& a, vector<N, K> b)
 	{
 		for (uint8_t i = 0; i < N; ++i)
 		{
@@ -220,8 +220,8 @@ namespace xm
 		return a;
 	}
 
-	template <uint8_t N, typename T>
-	inline vector<N, T>& operator-=(vector<N, T>& a, vector<N, T> b)
+	template <uint8_t N, typename T, typename K>
+	inline vector<N, T>& operator-=(vector<N, T>& a, vector<N, K> b)
 	{
 		for (uint8_t i = 0; i < N; ++i)
 		{
@@ -230,8 +230,8 @@ namespace xm
 		return a;
 	}
 
-	template <uint8_t N, typename T>
-	T dot(vector<N, T> a, vector<N, T> b)
+	template <uint8_t N, typename T, typename K>
+	T dot(vector<N, T> a, vector<N, K> b)
 	{
 		T res = T(0.0);
 
@@ -243,8 +243,8 @@ namespace xm
 		return res;
 	}
 
-	template <typename T>
-	vector<3, T> crossRH(vector<3, T> a, vector<3, T> b)
+	template <typename T, typename K>
+	vector<3, T> crossRH(vector<3, T> a, vector<3, K> b)
 	{
 		vector<3, T> res;
 
@@ -255,20 +255,20 @@ namespace xm
 		return res;
 	}
 
-	template <typename T>
-	inline vector<3, T> crossLH(vector<3, T> a, vector<3, T> b)
+	template <typename T, typename K>
+	inline vector<3, T> crossLH(vector<3, T> a, vector<3, K> b)
 	{
 		return -crossRH(a, b);
 	}
 
-	template <typename T>
-	inline vector<3, T> cross(vector<3, T> a, vector<3, T> b)
+	template <typename T, typename K>
+	inline vector<3, T> cross(vector<3, T> a, vector<3, K> b)
 	{
 		return crossRH(a, b);
 	}
 
-	template <typename T>
-	T cross2D(vector<2, T> a, vector<2, T> b)
+	template <typename T, typename K>
+	T cross2D(vector<2, T> a, vector<2, K> b)
 	{
 		return a.x * b.y - a.y * b.x;
 	}
