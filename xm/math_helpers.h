@@ -22,6 +22,9 @@ namespace xm
 		return a + f * (b - a);
 	}
 
+	template <typename... Ts>
+	using mul_result_t = decltype((std::declval<Ts>() * ...));
+
 	//TODO: completion - this was stolen from glm :(
 	/*
 	template<typename T>

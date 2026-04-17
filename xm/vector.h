@@ -8,18 +8,34 @@ namespace xm
 	template <uint8_t N, typename T>
 	struct vector;
 
-	template<typename T>
+	template <typename T>
 	struct vector<2, T>
 	{
 		static_assert(std::is_floating_point_v<T> || std::is_integral_v<T>);
 
-		vector(T x, T y)
+		template <typename K>
+		explicit vector(vector<3, K> vec)
+		{
+			this->x = vec.x;
+			this->y = vec.y;
+		}
+
+		template <typename K>
+		explicit vector(vector<4, K> vec)
+		{
+			this->x = vec.x;
+			this->y = vec.y;
+		}
+
+		template <typename K, typename W>
+		vector(K x, W y)
 		{
 			this->x = x;
 			this->y = y;
 		}
 
-		vector(T a)
+		template <typename K>
+		explicit vector(K a)
 		{
 			this->x = a;
 			this->y = a;
@@ -43,25 +59,60 @@ namespace xm
 
 		union
 		{
-			struct { T x, y; };
-			struct { T r, g; };
-			struct { T u, v; };
+			struct
+			{
+				T x, y;
+			};
+			struct
+			{
+				T r, g;
+			};
+			struct
+			{
+				T u, v;
+			};
 		};
-
 	};
 
-	template<typename T>
+	template <typename T>
 	struct vector<3, T>
 	{
 		static_assert(std::is_floating_point_v<T> || std::is_integral_v<T>);
-		vector(T x, T y, T z)
+
+		template <typename K, typename W>
+		vector(vector<2, W> xy, K z)
+		{
+			this->x = xy.x;
+			this->y = xy.y;
+			this->z = z;
+		}
+
+		template <typename K, typename W>
+		vector(K x, vector<2, W> yz)
+		{
+			this->x = x;
+			this->y = yz.x;
+			this->z = yz.y;
+		}
+
+		template <typename K>
+		explicit vector(vector<4, K> vec)
+		{
+			this->x = vec.x;
+			this->y = vec.y;
+			this->z = vec.z;
+		}
+
+		template <typename K, typename W, typename U>
+		vector(K x, W y, U z)
 		{
 			this->x = x;
 			this->y = y;
 			this->z = z;
 		}
 
-		vector(T a)
+		template <typename K>
+		explicit vector(K a)
 		{
 			this->x = a;
 			this->y = a;
@@ -87,17 +138,51 @@ namespace xm
 
 		union
 		{
-			struct { T x, y, z; };
-			struct { T r, g, b; };
+			struct
+			{
+				T x, y, z;
+			};
+			struct
+			{
+				T r, g, b;
+			};
 		};
 	};
 
-
-	template<typename T>
+	template <typename T>
 	struct vector<4, T>
 	{
 		static_assert(std::is_floating_point_v<T> || std::is_integral_v<T>);
-		vector(T x, T y, T z, T w)
+
+		template <typename K, typename W>
+		vector(vector<2, K> xy, vector<2, W> zw)
+		{
+			this->x = xy.x;
+			this->y = xy.y;
+			this->z = zw.x;
+			this->w = zw.y;
+		}
+
+		template <typename K, typename W>
+		vector(vector<3, K> xyz, W w)
+		{
+			this->x = xyz.x;
+			this->y = xyz.y;
+			this->z = xyz.z;
+			this->w = w;
+		}
+
+		template <typename K, typename W>
+		vector(K x, vector<3, W> yzw)
+		{
+			this->x = x;
+			this->y = yzw.x;
+			this->z = yzw.y;
+			this->w = yzw.z;
+		}
+
+		template <typename K, typename W, typename U, typename N>
+		vector(K x, W y, U z, N w)
 		{
 			this->x = x;
 			this->y = y;
@@ -105,7 +190,8 @@ namespace xm
 			this->w = w;
 		}
 
-		vector(T a)
+		template <typename K>
+		explicit vector(K a)
 		{
 			this->x = a;
 			this->y = a;
@@ -133,8 +219,14 @@ namespace xm
 
 		union
 		{
-			struct { T x, y, z, w; };
-			struct { T r, g, b, a; };
+			struct
+			{
+				T x, y, z, w;
+			};
+			struct
+			{
+				T r, g, b, a;
+			};
 		};
 	};
 
@@ -168,7 +260,8 @@ namespace xm
 	template <uint8_t N, typename T, typename K>
 	vector<N, T>& operator/=(vector<N, T>& a, K v)
 	{
-		for (uint8_t i = 0; i < N; ++i) a[i] /= v;
+		for (uint8_t i = 0; i < N; ++i)
+			a[i] /= v;
 		return a;
 	}
 
@@ -264,7 +357,11 @@ namespace xm
 	template <typename T, typename K>
 	inline vector<3, T> cross(vector<3, T> a, vector<3, K> b)
 	{
+#ifdef XM_LEFT_HANDED
+		return crossLH(a, b);
+#else
 		return crossRH(a, b);
+#endif
 	}
 
 	template <typename T, typename K>
@@ -290,7 +387,12 @@ namespace xm
 		return a / sqrt(sumOfSquares(a));
 	}
 
-}
+	template <uint8_t N, typename T>
+	inline void swap(vector<N, T>& a, vector<N, T>& b) 
+	{
+		vector<N, T> tmp = a;
+		a = b;
+		b = tmp;
+	}
 
-
-
+} // namespace xm

@@ -14,7 +14,7 @@ include(FetchContent)
 FetchContent_Declare(
   XPERMath
   GIT_REPOSITORY https://github.com/glasvizax/XPERMath
-  GIT_TAG v1.0
+  GIT_TAG v1.1
   SYSTEM
 )
 

@@ -312,6 +312,15 @@ namespace xm
 
 		return normalize(qx * qy * qz);
 	}
+
+	template <typename T>
+	inline void swap(quaternion<T>& a, quaternion <T> &b)
+	{
+		quaternion<T> tmp = a;
+		a = b;
+		b = tmp;
+	}
+
 }
 
 
