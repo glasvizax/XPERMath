@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include "assert.h"
+#include <cmath>
 
 namespace xm
 {
@@ -12,6 +13,13 @@ namespace xm
 	struct vector<2, T>
 	{
 		static_assert(std::is_floating_point_v<T> || std::is_integral_v<T>);
+
+		template <typename K>
+		explicit vector(vector<2, K> vec)
+		{
+			this->x = vec.x;
+			this->y = vec.y;
+		}
 
 		template <typename K>
 		explicit vector(vector<3, K> vec)
@@ -70,6 +78,10 @@ namespace xm
 			struct
 			{
 				T u, v;
+			};
+			struct
+			{
+				T width, height;
 			};
 		};
 	};
@@ -145,6 +157,10 @@ namespace xm
 			struct
 			{
 				T r, g, b;
+			};
+			struct
+			{
+				T pitch, yaw, roll;
 			};
 		};
 	};

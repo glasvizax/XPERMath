@@ -1,26 +1,36 @@
 cmake_minimum_required(VERSION 3.30)
 
-project(XPERMath VERSION 1.1)
+project(XPERMath VERSION 1.2 LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-# TODO : fix
-file(GLOB_RECURSE SRC CONFIGURE_DEPENDS xm/*)
+set(SRC_FILES
+    xm/constants.h
+    xm/math_helpers.h
+    xm/matrix.h
+    xm/matrix_transforms.h
+    xm/misc_helpers.h
+    xm/quaternion.h
+    xm/typedefs.h
+    xm/vector.h
+    xm/xm.h
+)
 
-add_library(XPER_Math INTERFACE EXCLUDE_FROM_ALL ${SRC})
+add_library(XPER_Math INTERFACE EXCLUDE_FROM_ALL ${SRC_FILES})
 
 add_library(XPER::Math ALIAS XPER_Math)
 
-target_include_directories(XPER_Math
+target_include_directories(
+    XPER_Math
     INTERFACE
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )
 
 set_target_properties(
     XPER_Math
     PROPERTIES 
-    EXPORT_NAME "Math"
+        EXPORT_NAME "Math"
 )
 
 target_sources(XPER_Math
@@ -30,38 +40,39 @@ target_sources(XPER_Math
         FILES ${SRC}
 )
 
-set(XPER_EXPORT_NAME XPER_Math_Exp)
+if(PROJECT_IS_TOP_LEVEL)
+    set(XPER_EXPORT_NAME XPER_Math_Exp)
 
-install(
-    TARGETS XPER_Math 
-    EXPORT ${XPER_EXPORT_NAME}
-    FILE_SET HEADERS
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/xm
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+    install(
+        TARGETS XPER_Math 
+        EXPORT ${XPER_EXPORT_NAME}
+        FILE_SET HEADERS
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/xm
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
 
-install(
-    EXPORT ${XPER_EXPORT_NAME} 
-    NAMESPACE XPER::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/XPERMath
-)
+    install(
+        EXPORT ${XPER_EXPORT_NAME} 
+        NAMESPACE XPER::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/XPERMath
+    )
 
-configure_package_config_file(
-    xm/XPERMathConfig.cmake.in 
-    XPERMathConfig.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/XPERMath
-    PATH_VARS XPER_EXPORT_NAME
-)
+    configure_package_config_file(
+        xm/XPERMathConfig.cmake.in 
+        XPERMathConfig.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/XPERMath
+        PATH_VARS XPER_EXPORT_NAME
+    )
 
-write_basic_package_version_file(
-    XPERMathConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY ExactVersion
-)
+    write_basic_package_version_file(
+        XPERMathConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY ExactVersion
+    )
 
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/XPERMathConfigVersion.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/XPERMathConfig.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/XPERMath
-)
-
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/XPERMathConfigVersion.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/XPERMathConfig.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/XPERMath
+    )
+endif()
