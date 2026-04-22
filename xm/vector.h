@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include "assert.h"
+#include <cmath>
 
 namespace xm
 {
@@ -70,6 +71,10 @@ namespace xm
 			struct
 			{
 				T u, v;
+			};
+			struct
+			{
+				T width, height;
 			};
 		};
 	};
@@ -145,6 +150,10 @@ namespace xm
 			struct
 			{
 				T r, g, b;
+			};
+			struct
+			{
+				T pitch, yaw, roll;
 			};
 		};
 	};

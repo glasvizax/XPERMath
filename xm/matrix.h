@@ -2,6 +2,10 @@
 
 #include <cstring>
 #include "vector.h"
+#include "math_helpers.h"
+
+template <typename... Ts>
+using mul_result_t = decltype((std::declval<Ts>() * ...));
 
 namespace xm
 {
@@ -180,6 +184,8 @@ namespace xm
 			return *(&a + i);
 		}
 	};
+
+	
 
 	template <uint8_t N, typename T, typename K>
 	auto operator*(const matrix<N, T>& a, const matrix<N, K>& b)
