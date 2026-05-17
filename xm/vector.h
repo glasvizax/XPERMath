@@ -179,6 +179,34 @@ namespace xm
 			this->w = zw.y;
 		}
 
+		template <typename K, typename W, typename U>
+		vector(vector<2, K> xy, W z, U w)
+		{
+			this->x = xy.x;
+			this->y = xy.y;
+			this->z = z;
+			this->w = w;
+		}
+
+		template <typename K, typename W, typename U>
+		vector(W x, U y, vector<2, K> zw)
+		{
+			this->x = x;
+			this->y = y;
+			this->z = zw.x;
+			this->w = zw.y;
+		}
+
+		
+		template <typename K, typename W, typename U>
+		vector(W x, vector<2, K> yz, U w)
+		{
+			this->x = x;
+			this->y = yz.x;
+			this->z = yz.y;
+			this->w = w;
+		}
+
 		template <typename K, typename W>
 		vector(vector<3, K> xyz, W w)
 		{
@@ -400,7 +428,7 @@ namespace xm
 	template <uint8_t N, typename T>
 	inline vector<N, T> normalize(vector<N, T> a)
 	{
-		return a / sqrt(sumOfSquares(a));
+		return a / std::sqrt(sumOfSquares(a));
 	}
 
 	template <uint8_t N, typename T>
@@ -409,6 +437,12 @@ namespace xm
 		vector<N, T> tmp = a;
 		a = b;
 		b = tmp;
+	}
+
+	template <uint8_t N, typename T, typename K>
+	inline auto reflect(vector<N, T> incident, vector<N, K> normal)
+	{
+		return incident - 2.0f * xm::dot(normal, incident) * normal;
 	}
 
 } // namespace xm

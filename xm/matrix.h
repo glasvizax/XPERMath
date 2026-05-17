@@ -20,7 +20,7 @@ namespace xm
 			memset(&this->a.x, static_cast<int>(T(0)), 4 * sizeof(T));
 		}
 		template <typename K>
-		matrix(K a)
+		explicit matrix(K a)
 		{
 			this->a.x = a;
 			this->a.y = 0.0;
@@ -29,7 +29,21 @@ namespace xm
 		}
 
 		template <typename K>
-		matrix(vector<2, K> a)
+		explicit matrix(matrix<3, K> other)
+		{
+			this->a = vector<2, T>(other.a);
+			this->b = vector<2, T>(other.b);
+		}
+
+		template <typename K>
+		explicit matrix(matrix<4, K> other)
+		{
+			this->a = vector<2, T>(other.a);
+			this->b = vector<2, T>(other.b);
+		}
+
+		template <typename K>
+		explicit matrix(vector<2, K> a)
 		{
 			this->a = vector<2, T>(a.x, 0.0);
 			this->b = vector<2, T>(0.0, a.y);
@@ -65,7 +79,7 @@ namespace xm
 		}
 
 		template <typename K>
-		matrix(K a)
+		explicit matrix(K a)
 		{
 			this->a.x = a;
 			this->a.y = 0.0;
@@ -81,11 +95,27 @@ namespace xm
 		}
 
 		template <typename K>
-		matrix(vector<3, K> a)
+		explicit matrix(vector<3, K> a)
 		{
 			this->a = vector<3, T>(a.x, 0.0, 0.0);
 			this->b = vector<3, T>(0.0, a.y, 0.0);
 			this->c = vector<3, T>(0.0, 0.0, a.z);
+		}
+
+		template <typename K>
+		explicit matrix(matrix<2, K> other)
+		{
+			this->a = vector<3, T>(other.a, 0.0f);
+			this->b = vector<3, T>(other.b, 0.0f);
+			this->c = vector<3, T>(0.0f);
+		}
+
+		template <typename K>
+		explicit matrix(matrix<4, K> other)
+		{
+			this->a = vector<3, T>(other.a);
+			this->b = vector<3, T>(other.b);
+			this->c = vector<3, T>(other.c);
 		}
 
 		template <typename K, typename W, typename U>
@@ -169,6 +199,32 @@ namespace xm
 			this->d = xm::vector<4, T>(d);
 		}
 
+		template <typename K>
+		explicit matrix(matrix<2, K> other)
+		{
+			this->a = vector<4, T>(other.a, 0.0f, 0.0f);
+			this->b = vector<4, T>(other.b, 0.0f, 0.0f);
+			this->c = vector<4, T>(0.0f);
+			this->d = vector<4, T>(0.0f);
+		}
+
+		template <typename K>
+		explicit matrix(matrix<3, K> other)
+		{
+			this->a = vector<4, T>(other.a, 0.0f);
+			this->b = vector<4, T>(other.b, 0.0f);
+			this->c = vector<4, T>(other.c, 0.0f);
+			this->d = vector<4, T>(0.0f, 0.0f, 0.0f, 1.0f);
+		}
+
+		template <typename K>
+		explicit matrix(matrix<4, K> other)
+		{
+			this->a = vector<4, T>(other.a);
+			this->b = vector<4, T>(other.b);
+			this->c = vector<4, T>(other.c);
+		}
+
 		vector<4, T> a;
 		vector<4, T> b;
 		vector<4, T> c;
@@ -185,12 +241,10 @@ namespace xm
 		}
 	};
 
-	
-
 	template <uint8_t N, typename T, typename K>
 	auto operator*(const matrix<N, T>& a, const matrix<N, K>& b)
 	{
-		matrix<N, mul_result_t<T,K>> res;
+		matrix<N, mul_result_t<T, K>> res;
 
 		for (uint8_t i = 0; i < N; ++i)
 		{
@@ -236,7 +290,7 @@ namespace xm
 #endif
 
 	template <uint8_t N, typename T, typename K>
-	void operator*=(matrix<N, T>& a, const matrix<N, K>& b) 
+	void operator*=(matrix<N, T>& a, const matrix<N, K>& b)
 	{
 		a = a * b;
 	}
@@ -295,6 +349,87 @@ namespace xm
 		matrix<N, T> tmp = a;
 		a = b;
 		b = tmp;
+	}
+
+	template <typename T>
+	matrix<3, T> inverse(const matrix<3, T>& m)
+	{
+		T det_recip = static_cast<T>(1) / (m[0][0] * (m[1][1] * m[2][2] - m[2][1] * m[1][2]) - m[1][0] * (m[0][1] * m[2][2] - m[2][1] * m[0][2]) + m[2][0] * (m[0][1] * m[1][2] - m[1][1] * m[0][2]));
+
+		matrix<3, T> inverse;
+		inverse[0][0] = +(m[1][1] * m[2][2] - m[2][1] * m[1][2]) * det_recip;
+		inverse[1][0] = -(m[1][0] * m[2][2] - m[2][0] * m[1][2]) * det_recip;
+		inverse[2][0] = +(m[1][0] * m[2][1] - m[2][0] * m[1][1]) * det_recip;
+		inverse[0][1] = -(m[0][1] * m[2][2] - m[2][1] * m[0][2]) * det_recip;
+		inverse[1][1] = +(m[0][0] * m[2][2] - m[2][0] * m[0][2]) * det_recip;
+		inverse[2][1] = -(m[0][0] * m[2][1] - m[2][0] * m[0][1]) * det_recip;
+		inverse[0][2] = +(m[0][1] * m[1][2] - m[1][1] * m[0][2]) * det_recip;
+		inverse[1][2] = -(m[0][0] * m[1][2] - m[1][0] * m[0][2]) * det_recip;
+		inverse[2][2] = +(m[0][0] * m[1][1] - m[1][0] * m[0][1]) * det_recip;
+
+		return inverse;
+	}
+
+	template <typename T>
+	matrix<4, T> inverse(const matrix<4, T>& m)
+	{
+		T Coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
+		T Coef02 = m[1][2] * m[3][3] - m[3][2] * m[1][3];
+		T Coef03 = m[1][2] * m[2][3] - m[2][2] * m[1][3];
+
+		T Coef04 = m[2][1] * m[3][3] - m[3][1] * m[2][3];
+		T Coef06 = m[1][1] * m[3][3] - m[3][1] * m[1][3];
+		T Coef07 = m[1][1] * m[2][3] - m[2][1] * m[1][3];
+
+		T Coef08 = m[2][1] * m[3][2] - m[3][1] * m[2][2];
+		T Coef10 = m[1][1] * m[3][2] - m[3][1] * m[1][2];
+		T Coef11 = m[1][1] * m[2][2] - m[2][1] * m[1][2];
+
+		T Coef12 = m[2][0] * m[3][3] - m[3][0] * m[2][3];
+		T Coef14 = m[1][0] * m[3][3] - m[3][0] * m[1][3];
+		T Coef15 = m[1][0] * m[2][3] - m[2][0] * m[1][3];
+
+		T Coef16 = m[2][0] * m[3][2] - m[3][0] * m[2][2];
+		T Coef18 = m[1][0] * m[3][2] - m[3][0] * m[1][2];
+		T Coef19 = m[1][0] * m[2][2] - m[2][0] * m[1][2];
+
+		T Coef20 = m[2][0] * m[3][1] - m[3][0] * m[2][1];
+		T Coef22 = m[1][0] * m[3][1] - m[3][0] * m[1][1];
+		T Coef23 = m[1][0] * m[2][1] - m[2][0] * m[1][1];
+
+		matrix<4, T> Inverse;
+		Inverse[0][0] = (m[1][1] * Coef00 - m[1][2] * Coef04 + m[1][3] * Coef08);
+		Inverse[0][1] = -(m[0][1] * Coef00 - m[0][2] * Coef04 + m[0][3] * Coef08);
+		Inverse[0][2] = (m[0][1] * Coef02 - m[0][2] * Coef06 + m[0][3] * Coef10);
+		Inverse[0][3] = -(m[0][1] * Coef03 - m[0][2] * Coef07 + m[0][3] * Coef11);
+
+		Inverse[1][0] = -(m[1][0] * Coef00 - m[1][2] * Coef12 + m[1][3] * Coef16);
+		Inverse[1][1] = (m[0][0] * Coef00 - m[0][2] * Coef12 + m[0][3] * Coef16);
+		Inverse[1][2] = -(m[0][0] * Coef02 - m[0][2] * Coef14 + m[0][3] * Coef18);
+		Inverse[1][3] = (m[0][0] * Coef03 - m[0][2] * Coef15 + m[0][3] * Coef19);
+
+		Inverse[2][0] = (m[1][0] * Coef04 - m[1][1] * Coef12 + m[1][3] * Coef20);
+		Inverse[2][1] = -(m[0][0] * Coef04 - m[0][1] * Coef12 + m[0][3] * Coef20);
+		Inverse[2][2] = (m[0][0] * Coef06 - m[0][1] * Coef14 + m[0][3] * Coef22);
+		Inverse[2][3] = -(m[0][0] * Coef07 - m[0][1] * Coef15 + m[0][3] * Coef23);
+
+		Inverse[3][0] = -(m[1][0] * Coef08 - m[1][1] * Coef16 + m[1][2] * Coef20);
+		Inverse[3][1] = (m[0][0] * Coef08 - m[0][1] * Coef16 + m[0][2] * Coef20);
+		Inverse[3][2] = -(m[0][0] * Coef10 - m[0][1] * Coef18 + m[0][2] * Coef22);
+		Inverse[3][3] = (m[0][0] * Coef11 - m[0][1] * Coef19 + m[0][2] * Coef23);
+
+		T Det = m[0][0] * Inverse[0][0] + m[0][1] * Inverse[1][0] + m[0][2] * Inverse[2][0] + m[0][3] * Inverse[3][0];
+		T OneOverDeterminant = static_cast<T>(1) / Det;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 4; ++j)
+			{
+				Inverse[i][j] *= OneOverDeterminant;
+			}
+		}
+
+		return Inverse;
 	}
 
 } // namespace xm

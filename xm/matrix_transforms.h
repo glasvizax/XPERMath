@@ -152,8 +152,8 @@ namespace xm
 		}
 	}
 
-	template <uint8_t N, typename T>
-	matrix<N, T> rotate(const matrix<N, T>& rotated, const vector<3, T>& axis, T radians)
+	template <uint8_t N, typename T, typename K, typename U>
+	matrix<N, T> rotate(const matrix<N, T>& rotated, const vector<3, K>& axis, U radians)
 	{
 		return rotated * rodriguesMatrix<N, T>(axis, radians);
 	}
